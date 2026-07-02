@@ -5,7 +5,7 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return jsonify(
-        message="Hello from Kubernetes!",
+        message="Hello from K8s!",
         status="running"
     )
 
