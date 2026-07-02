@@ -8,6 +8,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   dns_prefix          = "aks-${var.project_name}-${var.environment}"
+  oidc_issuer_enabled = true
 
   default_node_pool {
     name       = "default"
@@ -22,4 +23,16 @@ resource "azurerm_kubernetes_cluster" "main" {
   tags = {
     environment = var.environment
   }
+
+  lifecycle {
+    ignore_changes = [default_node_pool[0].upgrade_settings]
+  }
+}
+
+resource "azurerm_container_registry" "main" {
+  name = replace("acr${var.project_name}${var.environment}", "-", "")
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  sku                 = "Basic"
+  admin_enabled       = false
 }
